@@ -147,6 +147,8 @@ static void waitForNextFlight ()
     }
 
     /* insert your code here */
+    sh->fSt.st.hostessStat=WAIT_FOR_FLIGHT;
+    saveState(nFic,&sh->fSt);
     
     if (semUp (semgid, sh->mutex) == -1)                                                   /* exit critical region */
     { perror ("error on the down operation for semaphore access (HT)");
@@ -154,6 +156,10 @@ static void waitForNextFlight ()
     }
 
     /* insert your code here */
+    if(semDown(semgid,sh->readyForBoarding)==-1){
+        perror ("error on the up operation for semaphore access (AG)");
+        exit (EXIT_FAILURE);
+    }
 }
 
 /**
@@ -171,6 +177,8 @@ static void waitForPassenger ()
     }
 
     /* insert your code here */
+    sh->fSt.st.hostessStat=WAIT_FOR_PASSENGER;
+    saveState(nFic,&sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* exit critical region */
      perror ("error on the down operation for semaphore access (HT)");
@@ -178,6 +186,7 @@ static void waitForPassenger ()
     }
 
     /* insert your code here */
+
 }
 
 /**
@@ -199,6 +208,8 @@ static bool checkPassport()
 
     /* insert your code here */
 
+    
+
     if (semDown (semgid, sh->mutex) == -1) {                                                     /* enter critical region */
         perror ("error on the up operation for semaphore access (HT)");
         exit (EXIT_FAILURE);
@@ -206,6 +217,9 @@ static bool checkPassport()
     }
 
     /* insert your code here */
+    sh->fSt.st.hostessStat=CHECK_PASSPORT;
+    saveState(nFic,&sh->fSt);
+
 
     if (semUp (semgid, sh->mutex) == -1)     {                                                 /* exit critical region */
         perror ("error on the up operation for semaphore access (HT)");
@@ -213,6 +227,7 @@ static bool checkPassport()
     }
 
     /* insert your code here */
+    
 
     if (semDown (semgid, sh->mutex) == -1)  {                                                 /* enter critical region */
         perror ("error on the up operation for semaphore access (HT)");

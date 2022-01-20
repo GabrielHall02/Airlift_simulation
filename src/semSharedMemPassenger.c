@@ -146,14 +146,18 @@ static void waitInQueue (unsigned int passengerId)
     }
 
     /* insert your code here */
+    sh->fSt.st.passengerStat[passengerId]=IN_QUEUE;
+    saveState(nFic,&sh->fSt);
+    sh->fSt.nPassInQueue++;
 
-    if (semUp (semgid, sh->mutex) == -1)                                                      /* exit critical region */
+    
+    if (semUp (semgid, sh->readyForBoarding) == -1) //replaced sh->mutex by sh->readyForBoarding                                        /* exit critical region */
     { perror ("error on the up operation for semaphore access (PG)");
         exit (EXIT_FAILURE);
     }
-
+    
     /* insert your code here */
-
+    /* Wait hostess acknowledgement */
 
     if (semDown (semgid, sh->mutex) == -1) {                                                  /* enter critical region */
         perror ("error on the down operation for semaphore access (PG)");
@@ -161,6 +165,8 @@ static void waitInQueue (unsigned int passengerId)
     }
 
     /* insert your code here */
+    /* Give hostess permission to read passport */
+ 
 
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* enter critical region */
         perror ("error on the down operation for semaphore access (PG)");
@@ -168,6 +174,7 @@ static void waitInQueue (unsigned int passengerId)
     }
 
     /* insert your code here */
+    
 }
 
 /**
@@ -185,6 +192,9 @@ static void waitUntilDestination (unsigned int passengerId)
 {
 
     /* insert your code here */
+    /* Waitting in flight */
+    sh->fSt.st.passengerStat[passengerId]=IN_FLIGHT;
+    saveState(nFic,&sh->fSt);
 
     if (semDown (semgid, sh->mutex) == -1) {                                                  /* enter critical region */
         perror ("error on the down operation for semaphore access (PG)");
@@ -192,6 +202,8 @@ static void waitUntilDestination (unsigned int passengerId)
     }
 
     /* insert your code here */
+    sh->fSt.st.passengerStat[passengerId]=AT_DESTINATION;
+    saveState(nFic,&sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* enter critical region */
         perror ("error on the down operation for semaphore access (PG)");
