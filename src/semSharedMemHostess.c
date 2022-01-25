@@ -156,7 +156,8 @@ static void waitForNextFlight ()
     }
 
     /* insert your code here */
-    if(semDown(semgid,sh->readyForBoarding)==-1){
+    
+    if(semDown(semgid,sh->mutex)==-1){
         perror ("error on the up operation for semaphore access (AG)");
         exit (EXIT_FAILURE);
     }
@@ -186,7 +187,7 @@ static void waitForPassenger ()
     }
 
     /* insert your code here */
-
+    //Dun know
 }
 
 /**
@@ -208,8 +209,6 @@ static bool checkPassport()
 
     /* insert your code here */
 
-    
-
     if (semDown (semgid, sh->mutex) == -1) {                                                     /* enter critical region */
         perror ("error on the up operation for semaphore access (HT)");
         exit (EXIT_FAILURE);
@@ -219,7 +218,7 @@ static bool checkPassport()
     /* insert your code here */
     sh->fSt.st.hostessStat=CHECK_PASSPORT;
     saveState(nFic,&sh->fSt);
-
+    
 
     if (semUp (semgid, sh->mutex) == -1)     {                                                 /* exit critical region */
         perror ("error on the up operation for semaphore access (HT)");

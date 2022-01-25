@@ -227,7 +227,7 @@ static void dropPassengersAtTarget ()
 
     /* insert your code here */
 
-    sh->fSt.st.pilotStat=DROPING_PASSENGERS ;
+    sh->fSt.st.pilotStat=DROPING_PASSENGERS;
     saveState(nFic,&sh->fSt);
 
 

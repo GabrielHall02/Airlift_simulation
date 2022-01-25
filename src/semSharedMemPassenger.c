@@ -147,10 +147,9 @@ static void waitInQueue (unsigned int passengerId)
 
     /* insert your code here */
     sh->fSt.st.passengerStat[passengerId]=IN_QUEUE;
-    saveState(nFic,&sh->fSt);
     sh->fSt.nPassInQueue++;
+    saveState(nFic,&sh->fSt);
 
-    
     if (semUp (semgid, sh->readyForBoarding) == -1) //replaced sh->mutex by sh->readyForBoarding                                        /* exit critical region */
     { perror ("error on the up operation for semaphore access (PG)");
         exit (EXIT_FAILURE);
@@ -166,7 +165,6 @@ static void waitInQueue (unsigned int passengerId)
 
     /* insert your code here */
     /* Give hostess permission to read passport */
- 
 
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* enter critical region */
         perror ("error on the down operation for semaphore access (PG)");
