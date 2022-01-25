@@ -295,9 +295,11 @@ void signalReadyToFlight()
     }
 
     /* insert your code here */
+
     sh->fSt.st.hostessStat = READY_TO_FLIGHT;
     saveState(nFic, &sh->fSt);
     sh->fSt.nPassengersInFlight[sh->fSt.nFlight] = nPassengersInFlight();
+    saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1) /* exit critical region */
     { 
@@ -306,5 +308,10 @@ void signalReadyToFlight()
     }
 
     /* insert your code here */
-    
+
+    if (semDown(semgid, sh->readyToFlight) == -1)
+    { 
+        perror("error on the up operation for semaphore access (HT)");
+        exit(EXIT_FAILURE);
+    }
 }
