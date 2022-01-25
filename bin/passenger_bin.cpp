@@ -207,7 +207,7 @@ int32_t waitInQueue(int32_t edi, struct s0* rsi, uint64_t rdx) {
     rax9 = sh;
     *reinterpret_cast<int32_t*>(&rdx10) = edi;
     *reinterpret_cast<int32_t*>(reinterpret_cast<int64_t>(&rdx10) + 4) = 0;
-    *reinterpret_cast<int32_t*>(reinterpret_cast<int64_t>(rax9) + rdx10 * 4 + 8) = 1;
+    *reinterpret_cast<int32_t*>(reinterpret_cast<int64_t>(rax9) + rdx10 * 4 + 8) = 1; //sh->fSt.st.passengerStat[passengerId]=IN_QUEUE;
     rax11 = sh;
     saveState(0x603140, rax11);
     rax12 = sh;
@@ -239,7 +239,7 @@ int32_t waitInQueue(int32_t edi, struct s0* rsi, uint64_t rdx) {
     rax26 = sh;
     *reinterpret_cast<int32_t*>(&rdx27) = edi;
     *reinterpret_cast<int32_t*>(reinterpret_cast<int64_t>(&rdx27) + 4) = 0;
-    *reinterpret_cast<int32_t*>(reinterpret_cast<int64_t>(rax26) + rdx27 * 4 + 8) = 2;
+    *reinterpret_cast<int32_t*>(reinterpret_cast<int64_t>(rax26) + rdx27 * 4 + 8) = 2; //sh->fSt.st.passengerStat[passengerId]=IN_FLIGHT;
     rax28 = sh;
     saveState(0x603140, rax28);
     rax29 = sh;
