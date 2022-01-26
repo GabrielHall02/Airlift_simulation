@@ -154,7 +154,6 @@ static void waitInQueue(unsigned int passengerId)
     }                                                                                            
 
     /* insert your code here */
-
     sh->fSt.nPassInQueue++;
     sh->fSt.st.passengerStat[passengerId] = IN_QUEUE;
     saveState(nFic, &sh->fSt);
@@ -201,7 +200,7 @@ static void waitInQueue(unsigned int passengerId)
  *  \param passengerId passenger id
  */
 
-static void leavePalne(unsigned int passengerId)
+static void leavePlane(unsigned int passengerId)
 {
     sh->fSt.nPassInFlight--;
 }
@@ -224,7 +223,7 @@ static void waitUntilDestination(unsigned int passengerId)
 
     /* insert your code here */
     sh->fSt.st.passengerStat[passengerId] = AT_DESTINATION;
-    //leavePlane(passengerId);
+    leavePlane(passengerId);
     saveState(nFic, &sh->fSt);
     if (sh->fSt.nPassInFlight == 1)
     { // last passenger
