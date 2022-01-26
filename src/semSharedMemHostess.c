@@ -265,11 +265,15 @@ static bool checkPassport()
     }
 
     /* insert your code here */
-    if ((nPassengersInFlight() >= MAXFC) || (MINFC <= nPassengersInFlight() && nPassengersInQueue() == 0) || (sh->fSt.totalPassBoarded == N))
+    sh->fSt.nPassInQueue--;
+    sh->fSt.nPassInFlight++;
+    sh->fSt.totalPassBoarded++;
+    savePassengerChecked(nFic, &sh->fSt);
+    saveState(nFic, &sh->fSt);
+    if ((nPassengersInFlight() >= MAXFC) || ((MINFC <= nPassengersInFlight()) && (nPassengersInQueue() == 0)) || (sh->fSt.totalPassBoarded == N))
         last = true;
     else
         last = false;
-    saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1) /* exit critical region */
     {
@@ -278,6 +282,7 @@ static bool checkPassport()
     }
 
     /* insert your code here */
+    last = last & true;
 
     return last;
 }
@@ -312,10 +317,13 @@ void signalReadyToFlight()
     /* insert your code here */
 
     sh->fSt.st.hostessStat = READY_TO_FLIGHT;
-    sh->fSt.nPassengersInFlight[sh->fSt.nFlight] = nPassengersInFlight();
+    saveState(nFic, &sh->fSt);
+
+    sh->fSt.nPassengersInFlight[sh->fSt.nFlight] = nPassengersInFlight();    
+    saveFlightDeparted(nFic, &sh->fSt);
+
     if (sh->fSt.totalPassBoarded == N)
         sh->fSt.finished = true;
-    saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1) /* exit critical region */
     {
