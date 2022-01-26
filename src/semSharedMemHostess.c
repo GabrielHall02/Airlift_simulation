@@ -270,7 +270,7 @@ static bool checkPassport()
     sh->fSt.totalPassBoarded++;
     savePassengerChecked(nFic, &sh->fSt);
     saveState(nFic, &sh->fSt);
-    if ((nPassengersInFlight() >= MAXFC) || ((MINFC <= nPassengersInFlight()) && (nPassengersInQueue() == 0)) || (sh->fSt.totalPassBoarded == N))
+    if ((nPassengersInFlight() == MAXFC) || ((MINFC <= nPassengersInFlight()) && (nPassengersInQueue() == 0)) || (sh->fSt.totalPassBoarded == N))
         last = true;
     else
         last = false;
@@ -315,11 +315,11 @@ void signalReadyToFlight()
     }
 
     /* insert your code here */
-
     sh->fSt.st.hostessStat = READY_TO_FLIGHT;
     saveState(nFic, &sh->fSt);
 
-    sh->fSt.nPassengersInFlight[sh->fSt.nFlight] = nPassengersInFlight();    
+    //registers the number of passengers in this flight
+
     saveFlightDeparted(nFic, &sh->fSt);
 
     if (sh->fSt.totalPassBoarded == N)
@@ -332,7 +332,6 @@ void signalReadyToFlight()
     }
 
     /* insert your code here */
-
     if (semUp(semgid, sh->readyToFlight) == -1)
     {
         perror("error on the up operation for semaphore access (HT)");

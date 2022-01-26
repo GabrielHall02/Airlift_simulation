@@ -151,11 +151,12 @@ static void waitInQueue(unsigned int passengerId)
     { /* enter critical region */
         perror("error on the down operation for semaphore access (PG)");
         exit(EXIT_FAILURE);
-    }
+    }                                                                                            
 
     /* insert your code here */
-    sh->fSt.st.passengerStat[passengerId] = IN_QUEUE;
+
     sh->fSt.nPassInQueue++;
+    sh->fSt.st.passengerStat[passengerId] = IN_QUEUE;
     saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1) /* exit critical region */
@@ -165,7 +166,7 @@ static void waitInQueue(unsigned int passengerId)
     }
 
     /* insert your code here */
-    semUp(semgid, sh->idShown);
+    semUp(semgid, sh->passengersInQueue); 
     semDown(semgid, sh->passengersWaitInQueue);
 
     if (semDown(semgid, sh->mutex) == -1)
@@ -185,8 +186,8 @@ static void waitInQueue(unsigned int passengerId)
     }
 
     /* insert your code here */
-    // Falta aqui qualquer coisa
-    semUp(semgid, sh->passengersInQueue);
+    // Falta aqui qualquer coisa??
+    semUp(semgid, sh->idShown);
 }
 
 /**
@@ -200,11 +201,16 @@ static void waitInQueue(unsigned int passengerId)
  *  \param passengerId passenger id
  */
 
+static void leavePalne(unsigned int passengerId)
+{
+    sh->fSt.nPassInFlight--;
+}
+
 static void waitUntilDestination(unsigned int passengerId)
 {
 
     /* insert your code here */
-    if (semUp(semgid, sh->passengersWaitInFlight) == -1)
+    if (semDown(semgid, sh->passengersWaitInFlight) == -1)
     {
         perror("error on the up operation for semaphore access (PG)");
         exit(EXIT_FAILURE);
@@ -218,9 +224,9 @@ static void waitUntilDestination(unsigned int passengerId)
 
     /* insert your code here */
     sh->fSt.st.passengerStat[passengerId] = AT_DESTINATION;
-
-    sh->fSt.nPassInFlight--;
-    if (sh->fSt.nPassInFlight == 0)
+    //leavePlane(passengerId);
+    saveState(nFic, &sh->fSt);
+    if (sh->fSt.nPassInFlight == 1)
     { // last passenger
 
         if (semUp(semgid, sh->planeEmpty) == -1)
@@ -229,10 +235,6 @@ static void waitUntilDestination(unsigned int passengerId)
             exit(EXIT_FAILURE);
         }
     }
-
-    sh->fSt.totalPassBoarded++;
-    sh->fSt.nPassInFlight++;
-    saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1)
     { /* enter critical region */
