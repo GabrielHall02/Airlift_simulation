@@ -318,7 +318,6 @@ void signalReadyToFlight()
     sh->fSt.st.hostessStat = READY_TO_FLIGHT;
     saveState(nFic, &sh->fSt);
 
-    //registers the number of passengers in this flight
     sh->fSt.nPassengersInFlight[sh->fSt.nFlight - 1] = nPassengersInFlight();
 
     saveFlightDeparted(nFic, &sh->fSt);
