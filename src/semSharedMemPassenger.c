@@ -44,7 +44,7 @@ static SHARED_DATA *sh;
 static bool travelToAirport();
 static void waitInQueue(unsigned int passengerId);
 static void waitUntilDestination(unsigned int passengerId);
-static void leavePlane(unsigned int passengerId);
+//static void leavePlane(unsigned int passengerId);
 
 /**
  *  \brief Main program.
@@ -165,8 +165,8 @@ static void waitInQueue(unsigned int passengerId)
     }
 
     /* insert your code here */
-    semUp(semgid, sh->passengersInQueue); 
-    semDown(semgid, sh->passengersWaitInQueue);
+    semUp(semgid, sh->passengersWaitInQueue); 
+    semDown(semgid, sh->idShown);
 
     if (semDown(semgid, sh->mutex) == -1)
     { /* enter critical region */
@@ -200,20 +200,13 @@ static void waitInQueue(unsigned int passengerId)
  *  \param passengerId passenger id
  */
 
-static void leavePlane(unsigned int passengerId)
-{
-    sh->fSt.nPassInFlight--;
-}
+
 
 static void waitUntilDestination(unsigned int passengerId)
 {
 
     /* insert your code here */
-    if (semDown(semgid, sh->passengersWaitInFlight) == -1)
-    {
-        perror("error on the up operation for semaphore access (PG)");
-        exit(EXIT_FAILURE);
-    }
+    semDown(semgid, sh->passengersWaitInFlight);
 
     if (semDown(semgid, sh->mutex) == -1)
     { /* enter critical region */
@@ -223,16 +216,11 @@ static void waitUntilDestination(unsigned int passengerId)
 
     /* insert your code here */
     sh->fSt.st.passengerStat[passengerId] = AT_DESTINATION;
-    leavePlane(passengerId);
+    sh->fSt.nPassInFlight--;
     saveState(nFic, &sh->fSt);
     if (sh->fSt.nPassInFlight == 1)
     { // last passenger
-
-        if (semUp(semgid, sh->planeEmpty) == -1)
-        {
-            perror("error on the up operation for semaphore access (PG)");
-            exit(EXIT_FAILURE);
-        }
+        semUp(semgid, sh->planeEmpty);
     }
 
     if (semUp(semgid, sh->mutex) == -1)
