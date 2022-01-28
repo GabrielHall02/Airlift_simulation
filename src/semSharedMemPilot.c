@@ -199,11 +199,7 @@ static void signalReadyForBoarding()
     }
 
     /* insert your code here */
-    if (semUp(semgid, sh->readyForBoarding) == -1)
-    {
-        perror("error on the up operation for semaphore access (PG)");
-        exit(EXIT_FAILURE);
-    }
+    semUp(semgid, READYFORBOARDING);
 }
 
 /**
@@ -232,11 +228,7 @@ static void waitUntilReadyToFlight()
     }
 
     /* insert your code here */
-    if (semDown(semgid, sh->readyToFlight) == -1)
-    {
-        perror("error on the up operation for semaphore access (PG)");
-        exit(EXIT_FAILURE);
-    }
+    semDown(semgid, READYTOFLIGHT);
 }
 
 /**
@@ -261,7 +253,7 @@ static void dropPassengersAtTarget()
     saveState(nFic, &sh->fSt);
     for (int i = sh->fSt.nPassInFlight; i > 0; i--)
     {
-        semUp(semgid, sh->passengersWaitInFlight);
+        semUp(semgid, PASSENGERSWAITINFLIGHT);
     }
 
     if (semUp(semgid, sh->mutex) == -1)
@@ -271,7 +263,7 @@ static void dropPassengersAtTarget()
     }
 
     /* insert your code here */
-    semDown(semgid, sh->planeEmpty);
+    semDown(semgid, PLANEEMPTY);
 
     if (semDown(semgid, sh->mutex) == -1)
     { /* enter critical region */

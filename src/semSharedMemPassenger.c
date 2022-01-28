@@ -44,7 +44,7 @@ static SHARED_DATA *sh;
 static bool travelToAirport();
 static void waitInQueue(unsigned int passengerId);
 static void waitUntilDestination(unsigned int passengerId);
-//static void leavePlane(unsigned int passengerId);
+static void leavePlane(unsigned int passengerId);
 
 /**
  *  \brief Main program.
@@ -136,6 +136,20 @@ static bool travelToAirport()
 }
 
 /**
+ *  \brief passenger leaves the plane.
+ *
+ *  Update the number of passengers in flight and arrive at destination.
+ *
+ *  \param passengerId passenger id
+ */
+
+static void leavePlane(unsigned int passengerId)
+{
+    sh->fSt.nPassInFlight--;
+    sh->fSt.st.passengerStat[passengerId] = AT_DESTINATION;
+}
+
+/**
  *  \brief wait for its turn to be checked by hostess
  *
  *  Passenger should update number of passenger in queue, and inform hostess that he is ready for boarding
@@ -158,8 +172,8 @@ static void waitInQueue(unsigned int passengerId)
     sh->fSt.st.passengerStat[passengerId] = IN_QUEUE;
     saveState(nFic, &sh->fSt);
 
-    if (semUp(semgid, sh->mutex) == -1) /* exit critical region */
-    {
+    if (semUp(semgid, sh->mutex) == -1) 
+    { /* exit critical region */
         perror("error on the up operation for semaphore access (PG)");
         exit(EXIT_FAILURE);
     }
@@ -180,7 +194,7 @@ static void waitInQueue(unsigned int passengerId)
 
     if (semUp(semgid, sh->mutex) == -1)
     { /* exit critical region */
-        perror("error on the down operation for semaphore access (PG)");
+        perror("error on the up operation for semaphore access (PG)");
         exit(EXIT_FAILURE);
     }
 
@@ -199,8 +213,6 @@ static void waitInQueue(unsigned int passengerId)
  *  \param passengerId passenger id
  */
 
-
-
 static void waitUntilDestination(unsigned int passengerId)
 {
 
@@ -214,13 +226,11 @@ static void waitUntilDestination(unsigned int passengerId)
     }
 
     /* insert your code here */
-    sh->fSt.nPassInFlight--;
-    sh->fSt.st.passengerStat[passengerId] = AT_DESTINATION;
+    leavePlane(passengerId);
     saveState(nFic, &sh->fSt);
+    // last passenger inform pilot that plane is empty
     if (sh->fSt.nPassInFlight == 0)
-    { // last passenger
         semUp(semgid, PLANEEMPTY);
-    }
 
     if (semUp(semgid, sh->mutex) == -1)
     { /* exit critical region */
