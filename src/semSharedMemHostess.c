@@ -250,7 +250,7 @@ static bool checkPassport()
     sh->fSt.totalPassBoarded++;
     savePassengerChecked(nFic, &sh->fSt);
     saveState(nFic, &sh->fSt);
-    if ((nPassengersInFlight() >= MAXFC) || ((MINFC <= nPassengersInFlight()) && (nPassengersInQueue() == 0)) || (sh->fSt.totalPassBoarded == N))
+    if ((nPassengersInFlight() == MAXFC) || ((MINFC <= nPassengersInFlight()) && (nPassengersInQueue() == 0)) || (sh->fSt.totalPassBoarded == N))
         last = true;
     else
         last = false;
