@@ -189,6 +189,7 @@ static void waitInQueue(unsigned int passengerId)
     }
 
     /* insert your code here */
+    sh->fSt.passengerChecked = passengerId;
     sh->fSt.st.passengerStat[passengerId] = IN_FLIGHT;
     saveState(nFic, &sh->fSt);
 

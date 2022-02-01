@@ -255,6 +255,7 @@ static bool checkPassport()
     else
         last = false;
 
+
     if (semUp(semgid, sh->mutex) == -1) 
     { /* exit critical region */
         perror("error on the up operation for semaphore access (HT)");
